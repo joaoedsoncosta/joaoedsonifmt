@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Localização em Tempo Real</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+        #map { width: 100%; height: 100vh; }
+    </style>
+</head>
+<body>
+    <!-- Container do Mapa -->
+    <div id="map"></div>
+
+    <!-- Script do Mapbox -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <script>
+        // Configuração do Mapbox
+        mapboxgl.accessToken = 'pk.eyJ1Ijoiam9hb2Vkc29uY29zdGEiLCJhIjoiY20ydHFyZG41MDV6YTJscHYxNjE5YTkzYSJ9.NGWEmgozPqv_gJd9p-WXqg';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-46.625290, -23.533773], // Ponto inicial (longitude, latitude)
+            zoom: 14
+        });
+
+        // Adiciona um marcador de localização inicial
+        const marker = new mapboxgl.Marker()
+            .setLngLat([-46.625290, -23.533773]) // Localização inicial
+            .addTo(map);
+
+        // Atualiza a localização em tempo real
+        function updateLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        // Atualiza o mapa e o marcador com a nova localização
+                        map.setCenter([longitude, latitude]);
+                        marker.setLngLat([longitude, latitude]);
+                    },
+                    (error) => {
+                        console.error("Erro ao obter localização:", error);
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                console.log("Geolocalização não é suportada pelo navegador.");
+            }
+        }
+
+        // Chama a função para iniciar a atualização de localização
+        updateLocation();
+    </script>
+</body>
+</html>
